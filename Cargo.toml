@@ -6,3 +6,5 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+snowbridge-amcl = { version="1.0.2", default-features = false, features=["bls381"]}
+blake2 = "0.10.6"
