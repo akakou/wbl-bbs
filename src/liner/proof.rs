@@ -4,6 +4,7 @@ use snowbridge_amcl::bls381::ecp2::ECP2;
 use snowbridge_amcl::bls381::big::Big;
 use snowbridge_amcl::rand::RAND;
 
+use super::error::LinerProofError;
 use super::statement::Statement;
 use super::utils::{self, calc_sigma_response, calc_inner_product, calc_inner_product_one};
 use super::witeness::Witness;
@@ -25,11 +26,12 @@ impl Proof {
         }
     }
 
-    pub fn prove(statement: &Statement, witness: &Witness, rng: &mut RAND) -> Result<Self, ()> {
+    pub fn prove(statement: &Statement, witness: &Witness, rng: &mut RAND) -> Result<Self, LinerProofError> {
+        statement.well_formed()?;
+        witness.well_formed(statement)?;
+
         let input_len = witness.0.len();
         let output_len = statement.x.len();
-
-        Self::check_input_dementions(witness, statement)?;
 
         let mut proof = Proof::new(input_len, output_len);
 
@@ -48,7 +50,7 @@ impl Proof {
         return Ok(proof);
     }
 
-    pub fn verify(statement: &Statement, proof: &Proof) -> Result<(), ()> {
+    pub fn verify(statement: &Statement, proof: &Proof) -> Result<(), LinerProofError> {
         let c = utils::hash(statement, proof);
         let output_len = statement.x.len();
 
@@ -57,22 +59,11 @@ impl Proof {
             let rhs = calc_inner_product_one(&statement.x[i], &c,  &proof.r[i]);
 
             if !lhs.equals(&rhs) {
-                return Err(())
+                return Err(LinerProofError::VerifyFailed(lhs.to_string(), lhs.to_string()))
             }
         }
 
         return Ok(());
-    }
-
-    fn check_input_dementions(witness : &Witness, statement: &Statement) -> Result<(), ()> {
-        statement.well_formed()?;
-        
-        if witness.0.len() != statement.f.len() {
-            return Err(())
-        }
-
-        return Ok(())
-
     }
 }
 

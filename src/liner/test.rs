@@ -38,3 +38,4 @@ fn test_schnorr() {
     res.expect("verification failed")
 
 }
+
