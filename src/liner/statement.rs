@@ -12,6 +12,22 @@ impl Statement {
             x: x,
         }
     }
+
+    pub fn well_formed(&self) -> Result<(), ()> {
+        let rowlen = self.f[0].len();
+
+        for row in self.f.iter() {
+            if row.len() != rowlen {
+                return Err(())
+            }
+        }
+        
+        if self.x.len() != self.f.len() {
+            return Err(())
+        }
+
+        return Ok(())
+    }
 }
 
 

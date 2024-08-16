@@ -1,6 +1,6 @@
 
 use proof::Proof;
-use snowbridge_amcl::{bls381::{big::Big, ecp2::ECP2}, rand::RAND};
+use snowbridge_amcl::{bls381::{big::Big, ecp2::ECP2, hash_to_curve::{self, hash, HashAlgorithm}, mpin::SHA256}, rand::RAND};
 use statement::Statement;
 use witeness::Witness;
 
@@ -32,7 +32,7 @@ fn test_schnorr() {
         x,
     ]);
 
-    let proof = Proof::prove(&statement, &witness, &mut rng);
+    let proof = Proof::prove(&statement, &witness, &mut rng).expect("proving failed");
     let res = Proof::verify(&statement, &proof);
 
     res.expect("verification failed")

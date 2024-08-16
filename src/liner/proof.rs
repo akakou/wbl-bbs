@@ -25,9 +25,11 @@ impl Proof {
         }
     }
 
-    pub fn prove(statement: &Statement, witness: &Witness, rng: &mut RAND) -> Self {
+    pub fn prove(statement: &Statement, witness: &Witness, rng: &mut RAND) -> Result<Self, ()> {
         let input_len = witness.0.len();
         let output_len = statement.x.len();
+
+        Self::check_input_dementions(witness, statement)?;
 
         let mut proof = Proof::new(input_len, output_len);
 
@@ -43,7 +45,7 @@ impl Proof {
             proof.s[i] = calc_sigma_response(&c, &witness.0[i], &randoms[i]);
         }
 
-        return proof;
+        return Ok(proof);
     }
 
     pub fn verify(statement: &Statement, proof: &Proof) -> Result<(), ()> {
@@ -60,6 +62,17 @@ impl Proof {
         }
 
         return Ok(());
+    }
+
+    fn check_input_dementions(witness : &Witness, statement: &Statement) -> Result<(), ()> {
+        statement.well_formed()?;
+        
+        if witness.0.len() != statement.f.len() {
+            return Err(())
+        }
+
+        return Ok(())
+
     }
 }
 
