@@ -18,10 +18,10 @@ impl Proof {
     pub fn new(input: usize, output: usize) -> Self {
         Proof {
             r: vec![
-                ECP2::new(); input
+                ECP2::new(); output
             ],
             s: vec![
-                Big::new(); output
+                Big::new(); input
             ],
         }
     }
