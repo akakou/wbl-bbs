@@ -53,10 +53,6 @@ pub(crate) fn calc_inner_product_one(base: &ECP2, multer: &Big, adder: &ECP2) ->
 pub(crate) fn calc_inner_product(base: &[ECP2], multers: &[Big]) -> ECP2 {
     let mut res = ECP2::new();
 
-    if base.len() != multers.len() {
-        panic!("{} != {}", base.len(), multers.len())
-    } 
-
     for i in 0..multers.len(){
         let t = calc_inner_product_one(&base[i], &multers[i], &res);
         res.add(&t);

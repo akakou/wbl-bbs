@@ -4,6 +4,7 @@ use snowbridge_amcl::bls381::ecp2::ECP2;
 use snowbridge_amcl::bls381::big::Big;
 use snowbridge_amcl::rand::RAND;
 
+use super::error::LinerProofError;
 use super::statement::Statement;
 use super::utils::{self, calc_sigma_response, calc_inner_product, calc_inner_product_one};
 use super::witeness::Witness;
@@ -17,15 +18,18 @@ impl Proof {
     pub fn new(input: usize, output: usize) -> Self {
         Proof {
             r: vec![
-                ECP2::new(); input
+                ECP2::new(); output
             ],
             s: vec![
-                Big::new(); output
+                Big::new(); input
             ],
         }
     }
 
-    pub fn prove(statement: &Statement, witness: &Witness, rng: &mut RAND) -> Self {
+    pub fn prove(statement: &Statement, witness: &Witness, rng: &mut RAND) -> Result<Self, LinerProofError> {
+        statement.well_formed()?;
+        witness.well_formed(statement)?;
+
         let input_len = witness.0.len();
         let output_len = statement.x.len();
 
@@ -43,10 +47,10 @@ impl Proof {
             proof.s[i] = calc_sigma_response(&c, &witness.0[i], &randoms[i]);
         }
 
-        return proof;
+        return Ok(proof);
     }
 
-    pub fn verify(statement: &Statement, proof: &Proof) -> Result<(), ()> {
+    pub fn verify(statement: &Statement, proof: &Proof) -> Result<(), LinerProofError> {
         let c = utils::hash(statement, proof);
         let output_len = statement.x.len();
 
@@ -55,7 +59,7 @@ impl Proof {
             let rhs = calc_inner_product_one(&statement.x[i], &c,  &proof.r[i]);
 
             if !lhs.equals(&rhs) {
-                return Err(())
+                return Err(LinerProofError::VerifyFailed(lhs.to_string(), lhs.to_string()))
             }
         }
 

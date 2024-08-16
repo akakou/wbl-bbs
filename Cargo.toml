@@ -8,3 +8,4 @@ edition = "2021"
 [dependencies]
 snowbridge-amcl = { version="1.0.2", default-features = false, features=["bls381"]}
 blake2 = "0.10.6"
+thiserror = "1.0.63"
