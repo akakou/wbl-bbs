@@ -11,10 +11,10 @@ impl Witness {
     }
 
     pub fn well_formed(&self, statement: &Statement) -> Result<(), LinerProofError> {
-        if self.0.len() == statement.f.len() {
+        if self.0.len() == statement.f[0].len() {
             return Ok(());
         } else {
-            return Err(LinerProofError::WitnessNotWellFormed(self.0.len(), statement.f.len() ));
+            return Err(LinerProofError::WitnessNotWellFormed(self.0.len(), statement.f[0].len() ));
         }
     }
 }
