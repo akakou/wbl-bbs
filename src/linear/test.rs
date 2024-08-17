@@ -28,7 +28,7 @@ fn test_schnorr() {
     let witness = Witness(vec![x]);
 
     let proof = Proof::prove(&statement, &witness, &mut rng).expect("proving failed");
-    let res = Proof::verify(&statement, &proof);
+    let res = proof.verify(&statement);
 
     res.expect("verification failed")
 }
@@ -53,7 +53,7 @@ fn test_dlog() {
     witness.satisfied(&statement).expect("satisfied failed");
 
     let proof = Proof::prove(&statement, &witness, &mut rng).expect("proving failed");
-    let res = Proof::verify(&statement, &proof);
+    let res = proof.verify(&statement);
 
     res.expect("verification failed")
 }
@@ -91,7 +91,7 @@ fn test_commit_eq() {
     witness.satisfied(&statement).expect("satisfied failed");
 
     let proof = Proof::prove(&statement, &witness, &mut rng).expect("proving failed");
-    let res = Proof::verify(&statement, &proof);
+    let res = proof.verify(&statement);
 
     res.expect("verification failed")
 }

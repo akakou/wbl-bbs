@@ -50,13 +50,13 @@ impl Proof {
         return Ok(proof);
     }
 
-    pub fn verify(statement: &Statement, proof: &Proof) -> Result<(), LinearProofError> {
-        let c = utils::hash(statement, proof);
+    pub fn verify(&self, statement: &Statement) -> Result<(), LinearProofError> {
+        let c = utils::hash(statement, self);
         let output_len = statement.x.len();
 
         for i in 0..output_len {
-            let lhs = calc_inner_product(&statement.f[i], &proof.s);
-            let rhs = calc_inner_product_one(&statement.x[i], &c, &proof.r[i]);
+            let lhs = calc_inner_product(&statement.f[i], &self.s);
+            let rhs = calc_inner_product_one(&statement.x[i], &c, &self.r[i]);
 
             if !lhs.equals(&rhs) {
                 return Err(LinearProofError::VerifyFailed(

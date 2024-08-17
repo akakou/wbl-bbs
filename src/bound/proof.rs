@@ -161,7 +161,7 @@ impl Proof {
         stmt.f[output_base][input_base] = params.h.clone();
         stmt.x[output_base] = comm.clone();
 
-        match linear::proof::Proof::verify(&stmt, &self.proof) {
+        match self.proof.verify(&stmt) {
             Ok(_) => Ok(()),
             Err(e) => Err(BoundProofError::VerifyFailed(e)),
         }
