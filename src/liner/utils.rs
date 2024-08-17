@@ -54,8 +54,7 @@ pub(crate) fn calc_inner_product(base: &[ECP2], multers: &[Big]) -> ECP2 {
     let mut res = ECP2::new();
 
     for i in 0..multers.len(){
-        let t = calc_inner_product_one(&base[i], &multers[i], &res);
-        res.add(&t);
+        res = calc_inner_product_one(&base[i], &multers[i], &res);
     }
 
     return res;

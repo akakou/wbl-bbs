@@ -59,7 +59,7 @@ impl Proof {
             let rhs = calc_inner_product_one(&statement.x[i], &c,  &proof.r[i]);
 
             if !lhs.equals(&rhs) {
-                return Err(LinerProofError::VerifyFailed(lhs.to_string(), lhs.to_string()))
+                return Err(LinerProofError::VerifyFailed(lhs.to_string(), lhs.to_string(), i))
             }
         }
 
