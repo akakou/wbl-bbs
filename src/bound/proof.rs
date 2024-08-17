@@ -87,9 +87,6 @@ impl Proof {
             stmt.f[y][output_index] = params.h.clone();
             stmt.f[y][output_index].neg();
 
-            // Note: is this really necessary?
-            stmt.x[y] = ECP2::new();
-
             witness.0[output_index] = Big::modmul(&digits[i], &bit_rs[i], &order())
         }
 
