@@ -26,5 +26,7 @@ fn test_bound_proof() {
     comm.add(&tmp);
 
     let proof = Proof::prove(&comm, &params, &open, 3, &mut rng).expect("proving failed");
-  
+    let res = proof.verify(&comm, &params, 3);
+
+    res.expect("verification failed")
 }

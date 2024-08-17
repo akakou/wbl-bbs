@@ -117,4 +117,56 @@ impl Proof {
             Err(e) => Err(BoundProofError::ProveFailed(e)),
         }
     }
+
+    pub fn verify(
+        &self,
+        comm: &ECP2,
+        params: &Parameters,
+        bit_length: usize,
+    ) -> Result<(), BoundProofError> {
+        let input_base = 3 * bit_length;
+        let input_len = input_base + 1;
+
+        let output_base = 2 * bit_length;
+        let output_len = output_base + 1;
+
+        let mut stmt = linear::statement::Statement::new(
+            vec![vec![ECP2::new(); input_len]; output_len],
+            vec![ECP2::new(); output_len],
+        );
+
+        for i in 0..bit_length {
+            stmt.x[i] = self.ci[i].clone();
+            stmt.f[i][i] = params.g.clone();
+            stmt.f[i][bit_length + i] = params.h.clone();
+        }
+
+        let mut neg_g = params.g.clone();
+        neg_g.neg();
+
+        for i in 0..bit_length {
+            let y = bit_length + i;
+            stmt.f[y][i] = self.ci[i].clone();
+            stmt.f[y][i].add(&neg_g);
+
+            let output_index = output_base + i;
+            stmt.f[y][output_index] = params.h.clone();
+            stmt.f[y][output_index].neg();
+        }
+
+        stmt.f[output_base][0] = params.g.clone();
+
+        let two = Big::new_int(2);
+        for i in 1..bit_length {
+            stmt.f[output_base][i] = stmt.f[output_base][i - 1].mul(&two);
+        }
+
+        stmt.f[output_base][input_base] = params.h.clone();
+        stmt.x[output_base] = comm.clone();
+
+        match linear::proof::Proof::verify(&stmt, &self.proof) {
+            Ok(_) => Ok(()),
+            Err(e) => Err(BoundProofError::VerifyFailed(e)),
+        }
+    }
 }
