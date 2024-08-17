@@ -34,11 +34,8 @@ pub struct Signature {
 }
 
 
-pub struct Parameters {
-    pub g0: ECP2,
-    pub g1: ECP2,
-    pub h0: ECP2,
-    pub h1: ECP2,
-}
+
 
 pub mod keygen;
+pub mod param;
+
