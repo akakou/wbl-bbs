@@ -5,8 +5,6 @@ use snowbridge_amcl::{
     bls381::{
         big::Big,
         ecp2::ECP2,
-        hash_to_curve::{self, hash, HashAlgorithm},
-        mpin::SHA256,
     },
     rand::RAND,
 };

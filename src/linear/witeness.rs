@@ -1,4 +1,4 @@
-use snowbridge_amcl::bls381::{big::Big, ecp2::ECP2};
+use snowbridge_amcl::bls381::big::Big;
 
 use super::{error::LinearProofError, statement::Statement, utils::calc_inner_product};
 
