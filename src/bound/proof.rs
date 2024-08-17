@@ -78,27 +78,12 @@ impl Proof {
         neg_g.neg();
 
         for i in 0..bit_length {
-            let y = bit_length + i;
-
-            stmt.f[y][i] = bit_coms[i].clone();
-            stmt.f[y][i].add(&neg_g);
-
             let output_index = output_base + i;
-            stmt.f[y][output_index] = params.h.clone();
-            stmt.f[y][output_index].neg();
-
             witness.0[output_index] = Big::modmul(&digits[i], &bit_rs[i], &order())
         }
 
-        stmt.f[output_base][0] = params.g.clone();
+        Self::compute_part_of_statement(&mut stmt, &bit_coms, commit, params, bit_length);
 
-        let two = Big::new_int(2);
-        for i in 1..bit_length {
-            stmt.f[output_base][i] = stmt.f[output_base][i - 1].mul(&two);
-        }
-
-        stmt.f[output_base][input_base] = params.h.clone();
-        stmt.x[output_base] = commit.clone();
         witness.0[input_base] = open.r.clone();
 
         match witness.satisfied(&stmt) {
@@ -132,8 +117,21 @@ impl Proof {
             vec![ECP2::new(); output_len],
         );
 
+        Self::compute_part_of_statement(&mut stmt, &self.ci, comm, params, bit_length);
+
+        match self.proof.verify(&stmt) {
+            Ok(_) => Ok(()),
+            Err(e) => Err(BoundProofError::VerifyFailed(e)),
+        }
+    }
+
+
+    fn compute_part_of_statement(stmt : &mut linear::statement::Statement, bit_coms: &[ECP2], comm: &ECP2, params: &Parameters, bit_length: usize) {
+        let input_base = 3 * bit_length;
+        let output_base = 2 * bit_length;
+
         for i in 0..bit_length {
-            stmt.x[i] = self.ci[i].clone();
+            stmt.x[i] = bit_coms[i].clone();
             stmt.f[i][i] = params.g.clone();
             stmt.f[i][bit_length + i] = params.h.clone();
         }
@@ -143,7 +141,7 @@ impl Proof {
 
         for i in 0..bit_length {
             let y = bit_length + i;
-            stmt.f[y][i] = self.ci[i].clone();
+            stmt.f[y][i] = bit_coms[i].clone();
             stmt.f[y][i].add(&neg_g);
 
             let output_index = output_base + i;
@@ -160,10 +158,5 @@ impl Proof {
 
         stmt.f[output_base][input_base] = params.h.clone();
         stmt.x[output_base] = comm.clone();
-
-        match self.proof.verify(&stmt) {
-            Ok(_) => Ok(()),
-            Err(e) => Err(BoundProofError::VerifyFailed(e)),
-        }
     }
 }
