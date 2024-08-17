@@ -52,6 +52,7 @@ fn test_dlog() {
     let statement = Statement::new(vec![vec![g0], vec![g1]], vec![b0, b1]);
 
     let witness = Witness(vec![x]);
+    witness.satisfied(&statement).expect("satisfied failed");
 
     let proof = Proof::prove(&statement, &witness, &mut rng).expect("proving failed");
     let res = Proof::verify(&statement, &proof);
@@ -89,6 +90,7 @@ fn test_commit_eq() {
     );
 
     let witness = Witness(vec![x, r0, r1]);
+    witness.satisfied(&statement).expect("satisfied failed");
 
     let proof = Proof::prove(&statement, &witness, &mut rng).expect("proving failed");
     let res = Proof::verify(&statement, &proof);

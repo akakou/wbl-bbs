@@ -1,6 +1,6 @@
-use snowbridge_amcl::bls381::big::Big;
+use snowbridge_amcl::bls381::{big::Big, ecp2::ECP2};
 
-use super::{error::LinearProofError, statement::Statement};
+use super::{error::LinearProofError, statement::Statement, utils::calc_inner_product};
 
 pub struct Witness(pub Vec<Big>);
 
@@ -18,5 +18,18 @@ impl Witness {
                 statement.f[0].len(),
             ));
         }
+    }
+
+    pub fn satisfied(&self, statement: &Statement) -> Result<(), LinearProofError> {
+        self.well_formed(statement)?;
+
+        for (i, f) in statement.f.iter().enumerate() {
+            let x = calc_inner_product(f, &self.0);
+            if !x.equals(&statement.x[i]) {
+                return Err(LinearProofError::WitnessNotSatisfied(x.to_string(), statement.x[i].to_string(), i));
+            }
+        }
+
+        return Ok(());
     }
 }

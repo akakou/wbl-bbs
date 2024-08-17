@@ -14,6 +14,9 @@ pub enum LinearProofError {
     #[error("Witness is not well formed (Witness.len() != Statement.F.len()): {0} != {1}")]
     WitnessNotWellFormed(usize, usize),
 
+    #[error("Witness is not satisfied: {0} != {1} in index {2}")]
+    WitnessNotSatisfied(String, String, usize),
+
     #[error("Proving failed")]
     ProvingFailed,
 }
