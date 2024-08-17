@@ -26,7 +26,11 @@ impl Witness {
         for (i, f) in statement.f.iter().enumerate() {
             let x = calc_inner_product(f, &self.0);
             if !x.equals(&statement.x[i]) {
-                return Err(LinearProofError::WitnessNotSatisfied(x.to_string(), statement.x[i].to_string(), i));
+                return Err(LinearProofError::WitnessNotSatisfied(
+                    x.to_string(),
+                    statement.x[i].to_string(),
+                    i,
+                ));
             }
         }
 
