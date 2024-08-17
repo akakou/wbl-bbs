@@ -7,7 +7,7 @@ use snowbridge_amcl::{
 
 use crate::linear::{self, utils::order};
 
-use super::{error::BoundProofError, Opening, Parameters, MAX_BIT_LENGTH};
+use super::{error::BoundProofError, utils::index_helper, Opening, Parameters, MAX_BIT_LENGTH};
 
 pub struct Proof {
     pub ci: Vec<ECP2>,
@@ -52,11 +52,8 @@ impl Proof {
             val = val / 2;
         }
 
-        let input_base = 3 * bit_length;
-        let input_len = input_base + 1;
-
-        let output_base = 2 * bit_length;
-        let output_len = output_base + 1;
+        let (input_base, output_base) = index_helper::bases(bit_length);
+        let (input_len, output_len) = index_helper::lens(bit_length);
 
         let mut stmt = linear::statement::Statement::new(
             vec![vec![ECP2::new(); input_len]; output_len],
@@ -106,11 +103,7 @@ impl Proof {
         params: &Parameters,
         bit_length: usize,
     ) -> Result<(), BoundProofError> {
-        let input_base = 3 * bit_length;
-        let input_len = input_base + 1;
-
-        let output_base = 2 * bit_length;
-        let output_len = output_base + 1;
+        let (input_len, output_len) = index_helper::lens(bit_length);
 
         let mut stmt = linear::statement::Statement::new(
             vec![vec![ECP2::new(); input_len]; output_len],
@@ -125,10 +118,14 @@ impl Proof {
         }
     }
 
-
-    fn compute_part_of_statement(stmt : &mut linear::statement::Statement, bit_coms: &[ECP2], comm: &ECP2, params: &Parameters, bit_length: usize) {
-        let input_base = 3 * bit_length;
-        let output_base = 2 * bit_length;
+    fn compute_part_of_statement(
+        stmt: &mut linear::statement::Statement,
+        bit_coms: &[ECP2],
+        comm: &ECP2,
+        params: &Parameters,
+        bit_length: usize,
+    ) {
+        let (input_base, output_base) = index_helper::bases(bit_length);
 
         for i in 0..bit_length {
             stmt.x[i] = bit_coms[i].clone();

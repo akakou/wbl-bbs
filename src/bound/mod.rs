@@ -1,5 +1,6 @@
 pub mod error;
 pub mod proof;
+pub mod utils;
 
 use snowbridge_amcl::bls381::{big::Big, ecp2::ECP2};
 

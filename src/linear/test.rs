@@ -2,10 +2,7 @@ use std::vec;
 
 use proof::Proof;
 use snowbridge_amcl::{
-    bls381::{
-        big::Big,
-        ecp2::ECP2,
-    },
+    bls381::{big::Big, ecp2::ECP2},
     rand::RAND,
 };
 use statement::Statement;
