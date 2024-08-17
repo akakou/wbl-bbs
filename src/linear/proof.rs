@@ -1,32 +1,32 @@
 use std::vec;
 
-use snowbridge_amcl::bls381::ecp2::ECP2;
 use snowbridge_amcl::bls381::big::Big;
+use snowbridge_amcl::bls381::ecp2::ECP2;
 use snowbridge_amcl::rand::RAND;
 
-use super::error::LinerProofError;
+use super::error::LinearProofError;
 use super::statement::Statement;
-use super::utils::{self, calc_sigma_response, calc_inner_product, calc_inner_product_one};
+use super::utils::{self, calc_inner_product, calc_inner_product_one, calc_sigma_response};
 use super::witeness::Witness;
 
 pub struct Proof {
-    pub r: Vec<ECP2>, 
-    pub s: Vec<Big>, 
+    pub r: Vec<ECP2>,
+    pub s: Vec<Big>,
 }
 
 impl Proof {
     pub fn new(input: usize, output: usize) -> Self {
         Proof {
-            r: vec![
-                ECP2::new(); output
-            ],
-            s: vec![
-                Big::new(); input
-            ],
+            r: vec![ECP2::new(); output],
+            s: vec![Big::new(); input],
         }
     }
 
-    pub fn prove(statement: &Statement, witness: &Witness, rng: &mut RAND) -> Result<Self, LinerProofError> {
+    pub fn prove(
+        statement: &Statement,
+        witness: &Witness,
+        rng: &mut RAND,
+    ) -> Result<Self, LinearProofError> {
         statement.well_formed()?;
         witness.well_formed(statement)?;
 
@@ -50,22 +50,23 @@ impl Proof {
         return Ok(proof);
     }
 
-    pub fn verify(statement: &Statement, proof: &Proof) -> Result<(), LinerProofError> {
+    pub fn verify(statement: &Statement, proof: &Proof) -> Result<(), LinearProofError> {
         let c = utils::hash(statement, proof);
         let output_len = statement.x.len();
 
-        for i in 0..output_len{
+        for i in 0..output_len {
             let lhs = calc_inner_product(&statement.f[i], &proof.s);
-            let rhs = calc_inner_product_one(&statement.x[i], &c,  &proof.r[i]);
+            let rhs = calc_inner_product_one(&statement.x[i], &c, &proof.r[i]);
 
             if !lhs.equals(&rhs) {
-                return Err(LinerProofError::VerifyFailed(lhs.to_string(), lhs.to_string(), i))
+                return Err(LinearProofError::VerifyFailed(
+                    lhs.to_string(),
+                    lhs.to_string(),
+                    i,
+                ));
             }
         }
 
         return Ok(());
     }
 }
-
-
-

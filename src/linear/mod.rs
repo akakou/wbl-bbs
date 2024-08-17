@@ -1,10 +1,8 @@
 pub mod error;
-pub mod utils;
-pub mod statement;
-pub mod witeness;
 pub mod proof;
-
+pub mod statement;
+pub mod utils;
+pub mod witeness;
 
 #[cfg(test)]
 pub mod test;
-

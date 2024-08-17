@@ -1,12 +1,10 @@
-use blake2::digest::typenum::uint;
 use thiserror::Error;
 
-
 #[derive(Debug, Error)]
-pub enum LinerProofError {
+pub enum LinearProofError {
     #[error("failed to verify: {0} != {1} in index {2}")]
     VerifyFailed(String, String, usize),
-    
+
     #[error("Statement is not well formed (F is not square matrix): {0} != {1} in index {2}")]
     StatementFNotWellFormed(usize, usize, usize),
 
@@ -19,4 +17,3 @@ pub enum LinerProofError {
     #[error("Proving failed")]
     ProvingFailed,
 }
-

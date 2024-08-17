@@ -1,4 +1,4 @@
-pub mod liner;
+pub mod linear;
 
 fn main() {
     println!("Hello, world!");
