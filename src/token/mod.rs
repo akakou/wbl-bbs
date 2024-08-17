@@ -33,9 +33,6 @@ pub struct Signature {
     pub e: Big,
 }
 
-pub struct PublicKey(pub ECP);
-
-pub struct SingingKey(pub Big);
 
 pub struct Parameters {
     pub g0: ECP2,
@@ -43,3 +40,5 @@ pub struct Parameters {
     pub h0: ECP2,
     pub h1: ECP2,
 }
+
+pub mod keygen;
