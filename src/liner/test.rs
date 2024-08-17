@@ -4,6 +4,7 @@ use std::vec;
 use proof::Proof;
 use snowbridge_amcl::{bls381::{big::Big, ecp2::ECP2, hash_to_curve::{self, hash, HashAlgorithm}, mpin::SHA256}, rand::RAND};
 use statement::Statement;
+use utils::{calc_inner_product, calc_inner_product_one};
 use witeness::Witness;
 
 use super::*;
@@ -50,8 +51,8 @@ fn test_dlog() {
 
     let x = Big::random(&mut rng);
 
-    let g0 = ECP2::generator();
-    let g1 = ECP2::generator().mul(&Big::new_int(2));
+    let g0 = ECP2::generator().mul(&Big::random(&mut rng));
+    let g1 = ECP2::generator().mul(&Big::random(&mut rng));
 
     let b0 = g0.mul(&x);
     let b1 = g1.mul(&x);
