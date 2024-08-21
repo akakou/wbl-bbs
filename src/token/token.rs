@@ -67,7 +67,7 @@ impl Token {
         }
     }
 
-    fn compute_commit_from_token(&self, params: &Parameters) -> ECP2 {
+    pub(crate) fn compute_commit_from_token(&self, params: &Parameters) -> ECP2 {
         let mut commit = params.h0.mul(&self.key);
 
         let attr = Big::new();
@@ -118,7 +118,6 @@ impl Token {
             return Err(());
             // println!("error: u is not equal to the computed commit\n");
         }
-
 
         return Ok(());
     }
