@@ -1,4 +1,4 @@
-use snowbridge_amcl::bls381::{big::Big, ecp::ECP, ecp2::ECP2};
+use snowbridge_amcl::bls381::{big::Big, ecp2::ECP2};
 
 use crate::{bound, linear};
 
@@ -13,29 +13,15 @@ pub struct Showing {
     pub pi: linear::proof::Proof,
 }
 
-pub struct Token {
-    pub a: ECP2,
-    pub e: Big,
-    pub s: Big,
-    pub key: Big,
-    pub attribute: Vec<u8>,
-}
-
-pub struct PreToken {
-    pub s: Big,
-    pub x: Big,
-    pub attribute: Vec<u8>,
-}
-
 pub struct Signature {
     pub a: ECP2,
     pub sprime: Big,
     pub e: Big,
 }
 
-
-
-
 pub mod keygen;
 pub mod param;
+pub mod token;
 
+#[cfg(test)]
+pub mod test;

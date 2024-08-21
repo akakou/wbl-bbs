@@ -1,4 +1,7 @@
-use snowbridge_amcl::{bls381::{big::Big, ecp::ECP}, rand::RAND};
+use snowbridge_amcl::{
+    bls381::{big::Big, ecp::ECP},
+    rand::RAND,
+};
 
 pub struct PublicKey(pub ECP);
 pub struct SigningKey(pub Big);
