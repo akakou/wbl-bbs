@@ -99,7 +99,7 @@ impl Proof {
 
     pub fn verify(
         &self,
-        comm: &ECP2,
+        commit: &ECP2,
         params: &Parameters,
         bit_length: usize,
     ) -> Result<(), BoundProofError> {
@@ -110,7 +110,7 @@ impl Proof {
             vec![ECP2::new(); output_len],
         );
 
-        Self::compute_part_of_statement(&mut stmt, &self.ci, comm, params, bit_length);
+        Self::compute_part_of_statement(&mut stmt, &self.ci, commit, params, bit_length);
 
         match self.proof.verify(&stmt) {
             Ok(_) => Ok(()),
