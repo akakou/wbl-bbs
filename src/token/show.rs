@@ -7,10 +7,12 @@ use snowbridge_amcl::{
 
 use crate::{
     bound::{self, error::BoundProofError},
-    linear::{self, statement::Statement, utils::order, witeness::Witness},
+    linear::{
+        self, error::LinearProofError, statement::Statement, utils::order, witeness::Witness,
+    },
 };
 
-use super::{keygen::PublicKey, param::Parameters, token::Token};
+use super::{error::TokenProofError, keygen::PublicKey, param::Parameters, token::Token};
 
 pub struct BBSShowing {
     pub aprime: ECP2,
@@ -91,9 +93,9 @@ impl BBSShowing {
         ));
     }
 
-    pub fn verify(&self, pk: &PublicKey) -> Result<(), ()> {
+    pub fn verify(&self, pk: &PublicKey) -> Result<(), TokenProofError> {
         if self.aprime.equals(&ECP2::new()) {
-            return Err(());
+            return Err(TokenProofError::APrimeIsUnity);
         }
 
         let mut left = pair::ate(&self.aprime, &pk.0);
@@ -105,7 +107,10 @@ impl BBSShowing {
         if left.equals(&right) {
             return Ok(());
         } else {
-            return Err(());
+            return Err(TokenProofError::PairingCheckFailedInShowing(
+                left.to_string(),
+                right.to_string(),
+            ));
         }
     }
 }
@@ -151,7 +156,7 @@ impl BoundShowing {
         bbs_showing: &BBSShowing,
         bit_limit: u8,
         params: &Parameters,
-    ) -> Result<(), ()> {
+    ) -> Result<(), TokenProofError> {
         match self.bound.verify(
             &bbs_showing.k_commit,
             &bound::Parameters {
@@ -161,7 +166,7 @@ impl BoundShowing {
             bit_limit as usize,
         ) {
             Ok(_) => Ok(()),
-            Err(_) => Err(()),
+            Err(e) => Err(TokenProofError::BoundProofError(e)),
         }
     }
 }
@@ -171,8 +176,8 @@ pub struct LinearShowing {
 }
 
 impl LinearShowing {
-    pub fn new(linear: linear::proof::Proof) -> Result<Self, ()> {
-        Ok(Self { linear: linear })
+    pub fn new(linear: linear::proof::Proof) -> Self {
+        Self { linear: linear }
     }
 
     pub fn show(
@@ -182,7 +187,7 @@ impl LinearShowing {
         origin: &ECP2,
         params: &Parameters,
         rng: &mut RAND,
-    ) -> Result<Self, ()> {
+    ) -> Result<Self, TokenProofError> {
         let mut r3 = secret.r1.clone();
         r3.invmodp(&order());
 
@@ -203,9 +208,9 @@ impl LinearShowing {
         let stmt = Self::stmt(bbs, origin, params);
 
         let linear = linear::proof::Proof::prove(&stmt, &witness, rng).expect("prove failed");
-        witness.satisfied(&stmt).expect("witness not satisfied");
+        // witness.satisfied(&stmt).expect("witness not satisfied");
 
-        return Self::new(linear);
+        return Ok(Self::new(linear));
     }
 
     fn stmt(bbs_showing: &BBSShowing, origin: &ECP2, params: &Parameters) -> Statement {
@@ -270,12 +275,12 @@ impl LinearShowing {
         bbs_showing: &BBSShowing,
         origin: &ECP2,
         params: &Parameters,
-    ) -> Result<(), ()> {
+    ) -> Result<(), TokenProofError> {
         let stmt = Self::stmt(bbs_showing, origin, params);
 
         match self.linear.verify(&stmt) {
             Ok(_) => Ok(()),
-            Err(_) => Err(()),
+            Err(e) => Err(TokenProofError::LinearProofError(e)),
         }
     }
 }

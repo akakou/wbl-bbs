@@ -1,3 +1,4 @@
+pub mod error;
 pub mod keygen;
 pub mod param;
 pub mod show;

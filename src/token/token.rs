@@ -6,6 +6,7 @@ use snowbridge_amcl::{
 use crate::linear::utils::order;
 
 use super::{
+    error::TokenProofError,
     keygen::{PublicKey, SigningKey},
     param::Parameters,
 };
@@ -82,11 +83,14 @@ impl Token {
         return commit;
     }
 
-    pub fn verify(&self, pub_key: &PublicKey, params: &Parameters) -> Result<(), ()> {
+    pub fn verify(&self, pub_key: &PublicKey, params: &Parameters) -> Result<(), TokenProofError> {
         let commit = self.compute_commit_from_token(params);
 
         if !commit.equals(&self.debug_u) {
-            panic!("commit is invalid")
+            return Err(TokenProofError::CommitCheckFailed(
+                commit.to_string(),
+                self.debug_u.to_string(),
+            ));
         }
 
         let mut key_adj = ECP::generator().mul(&self.e);
@@ -99,24 +103,10 @@ impl Token {
         right = pair::fexp(&right);
 
         if !left.equals(&right) {
-            return Err(());
-        }
-
-        // let res = utils::prod_pair_frac(
-        //     &vec![
-        //         &self.a,
-        //         &commit
-        //     ],
-        //     &vec![
-        //         &key_adj,
-        //         &ECP::generator()
-        //     ],
-        //     &[1, -1]
-        // );
-
-        if !commit.equals(&self.debug_u) {
-            return Err(());
-            // println!("error: u is not equal to the computed commit\n");
+            return Err(TokenProofError::PairingCheckFailedInToken(
+                left.to_string(),
+                right.to_string(),
+            ));
         }
 
         return Ok(());
