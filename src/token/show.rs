@@ -6,8 +6,8 @@ use snowbridge_amcl::{
 };
 
 use crate::{
-    bound,
-    linear::{self, utils::order},
+    bound::{self, error::BoundProofError},
+    linear::{self, statement::Statement, utils::order, witeness::Witness},
 };
 
 use super::{keygen::PublicKey, param::Parameters, token::Token};
@@ -21,6 +21,12 @@ pub struct BBSShowing {
     pub commit: ECP2,
 }
 
+pub struct BBSShowingSecret {
+    pub k_commit: ECP2,
+    pub k_open: Big,
+    pub k_sc: Big,
+}
+
 impl BBSShowing {
     pub fn show(
         token: &Token,
@@ -28,7 +34,7 @@ impl BBSShowing {
         k: u8,
         params: &Parameters,
         rng: &mut RAND,
-    ) -> Result<Self, ()> {
+    ) -> Result<(Self, BBSShowingSecret), ()> {
         if k == 0 {
             return Err(());
         }
@@ -54,9 +60,9 @@ impl BBSShowing {
         let k_open = Big::random(rng);
         let k_sc = Big::new_int(k as isize);
 
-        let mut k_comm = params.h0.mul(&k_sc);
+        let mut k_commit = params.h0.mul(&k_sc);
         let tmp1 = params.h1.mul(&k_open);
-        k_comm.add(&tmp1);
+        k_commit.add(&tmp1);
 
         let mut origin_exp = k_sc.clone();
         origin_exp.add(&token.key);
@@ -64,14 +70,21 @@ impl BBSShowing {
 
         let ticket = origins.mul(&origin_exp);
 
-        return Ok(Self {
-            aprime,
-            abar,
-            d,
-            // attributes:
-            tiket: ticket,
-            commit,
-        });
+        return Ok((
+            Self {
+                aprime,
+                abar,
+                d,
+                // attributes:
+                tiket: ticket,
+                commit,
+            },
+            BBSShowingSecret {
+                k_commit,
+                k_open,
+                k_sc,
+            },
+        ));
     }
 
     pub fn verify(&self, pk: &PublicKey) -> Result<(), ()> {
@@ -92,3 +105,54 @@ impl BBSShowing {
         }
     }
 }
+
+pub struct BoundShowing {
+    pub bound: crate::bound::proof::Proof,
+}
+
+impl BoundShowing {
+    pub fn new(bound: crate::bound::proof::Proof) -> Self {
+        Self { bound }
+    }
+
+    pub fn show(
+        secret: &BBSShowingSecret,
+        bit_limit: u8,
+        params: &Parameters,
+        rng: &mut RAND,
+    ) -> Result<Self, ()> {
+        let proof = bound::proof::Proof::prove(
+            &secret.k_commit,
+            &bound::Parameters {
+                g: params.h0.clone(),
+                h: params.h1.clone(),
+            },
+            &bound::Opening {
+                k: secret.k_sc.clone(),
+                r: secret.k_open.clone(),
+            },
+            bit_limit as usize,
+            rng,
+        );
+
+        match proof {
+            Ok(proof) => Ok(Self::new(proof)),
+            Err(_) => Err(()),
+        }
+    }
+
+    pub fn verify(&self, k_commit: &ECP2, bit_limit: u8, params: &Parameters) -> Result<(), ()> {
+        match self.bound.verify(
+            k_commit,
+            &bound::Parameters {
+                g: params.h0.clone(),
+                h: params.h1.clone(),
+            },
+            bit_limit as usize,
+        ) {
+            Ok(_) => Ok(()),
+            Err(_) => Err(()),
+        }
+    }
+}
+
