@@ -28,4 +28,7 @@ pub enum TokenProofError {
 
     #[error("Proving failed")]
     ProvingFailed,
+
+    #[error("Invalid zero bit limit")]
+    InvalidZeroBitLimit,
 }

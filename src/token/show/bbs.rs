@@ -32,9 +32,9 @@ impl BBSShowing {
         k: u8,
         params: &Parameters,
         rng: &mut RAND,
-    ) -> Result<(Self, BBSShowingSecret), ()> {
+    ) -> Result<(Self, BBSShowingSecret), TokenProofError> {
         if k == 0 {
-            return Err(());
+            return Err(TokenProofError::InvalidZeroBitLimit);
         }
 
         let r1 = Big::random(rng);

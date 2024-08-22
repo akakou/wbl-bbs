@@ -22,7 +22,7 @@ impl BoundShowing {
         bit_limit: u8,
         params: &Parameters,
         rng: &mut RAND,
-    ) -> Result<Self, ()> {
+    ) -> Result<Self, TokenProofError> {
         let proof = bound::proof::Proof::prove(
             &bbs_showing.k_commit,
             &bound::Parameters {
@@ -39,7 +39,7 @@ impl BoundShowing {
 
         match proof {
             Ok(proof) => Ok(Self::new(proof)),
-            Err(_) => Err(()),
+            Err(e) => Err(TokenProofError::BoundProofError(e)),
         }
     }
 
