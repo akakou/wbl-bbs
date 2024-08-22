@@ -3,8 +3,10 @@ use snowbridge_amcl::{
     rand::RAND,
 };
 
+use crate::utils::order;
+
 use crate::{
-    linear::{self, statement::Statement, utils::order, witeness::Witness},
+    linear::{self, statement::Statement, witeness::Witness},
     token::{error::TokenProofError, param::Parameters, token::Token},
 };
 

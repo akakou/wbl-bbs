@@ -89,7 +89,6 @@ fn test_linear_showing() {
         .expect("verification failed");
 }
 
-
 #[test]
 fn test_showing() {
     let mut rng = RAND::new();
@@ -102,6 +101,9 @@ fn test_showing() {
     let params = Parameters::debug(&mut rng);
     let t = Token::make(vec![1, 2, 3], &sk, &params, &mut rng);
 
-    let showing = Showing::show(&t, &ECP2::generator(), 3, &params, &mut rng).expect("showing failed");
-    showing.verify(3, &ECP2::generator(), &pk, &params).expect("verification failed");
+    let showing =
+        Showing::show(&t, &ECP2::generator(), 3, &params, &mut rng).expect("showing failed");
+    showing
+        .verify(3, &ECP2::generator(), &pk, &params)
+        .expect("verification failed");
 }

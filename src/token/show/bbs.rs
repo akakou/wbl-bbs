@@ -3,10 +3,9 @@ use snowbridge_amcl::{
     rand::RAND,
 };
 
-use crate::{
-    linear::utils::order,
-    token::{error::TokenProofError, keygen::PublicKey, param::Parameters, token::Token},
-};
+use crate::token::{error::TokenProofError, keygen::PublicKey, param::Parameters, token::Token};
+
+use crate::utils::order;
 
 pub struct BBSShowing {
     pub aprime: ECP2,

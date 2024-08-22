@@ -2,6 +2,7 @@ use blake2::{Blake2s256, Digest};
 use snowbridge_amcl::bls381::{big::Big, ecp2::ECP2, rom};
 
 use super::{proof::Proof, statement::Statement};
+use crate::utils::order;
 
 pub(crate) fn hash(statement: &Statement, proof: &Proof) -> Big {
     let mut hash = Blake2s256::new();
@@ -55,8 +56,4 @@ pub(crate) fn calc_inner_product(base: &[ECP2], multers: &[Big]) -> ECP2 {
     }
 
     return res;
-}
-
-pub(crate) fn order() -> Big {
-    Big::new_ints(&rom::CURVE_ORDER)
 }
