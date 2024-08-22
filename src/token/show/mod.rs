@@ -1,10 +1,9 @@
 use core::CoreShowing;
 
 use snowbridge_amcl::{
-    bls381::ecp2::ECP2,
+    bls381::{bls381::utils::hash_to_curve_g2, ecp2::ECP2},
     rand::RAND,
 };
-
 
 use super::{error::TokenProofError, keygen::PublicKey, param::Parameters, token::Token};
 
@@ -37,20 +36,22 @@ impl Showing {
 
     pub fn show(
         token: &Token,
-        origins: &ECP2,
+        origin: &[u8],
         bit_limit: u8,
         params: &Parameters,
         rng: &mut RAND,
     ) -> Result<Self, TokenProofError> {
+        let origin = hash_to_curve_g2(origin, b"origin generator");
+
         let (core_showing, core_session) =
-            core::CoreShowing::show(token, origins, bit_limit, params, rng)?;
+            core::CoreShowing::show(token, &origin, bit_limit, params, rng)?;
         let (bbs_showing, bbs_session) = bbs::BBSShowing::show(token, bit_limit, params, rng)?;
 
         let bound =
             bound::BoundShowing::show(bit_limit, &core_showing, &core_session, params, rng)?;
         let linear = linear::LinearShowing::show(
             &token,
-            origins,
+            &origin,
             &core_showing,
             &core_session,
             &bbs_showing,
@@ -65,10 +66,12 @@ impl Showing {
     pub fn verify(
         &self,
         bit_limit: u8,
-        origin: &ECP2,
+        origin: &[u8],
         pk: &PublicKey,
         params: &Parameters,
     ) -> Result<(), TokenProofError> {
+        let origin = hash_to_curve_g2(origin, b"origin generator");
+
         self.bbs.verify(pk)?;
         self.bound.verify(&self.core, bit_limit, &params)?;
         self.linear

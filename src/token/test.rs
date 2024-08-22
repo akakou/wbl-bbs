@@ -35,9 +35,8 @@ fn test_showing() {
     let params = Parameters::default();
     let t = Token::make(vec![1, 2, 3], &sk, &params, &mut rng);
 
-    let showing =
-        Showing::show(&t, &ECP2::generator(), 3, &params, &mut rng).expect("showing failed");
+    let showing = Showing::show(&t, b"hello", 3, &params, &mut rng).expect("showing failed");
     showing
-        .verify(3, &ECP2::generator(), &pk, &params)
+        .verify(3, b"hello", &pk, &params)
         .expect("verification failed");
 }

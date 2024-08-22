@@ -13,13 +13,13 @@ impl Parameters {
     }
 
     pub fn default() -> Self {
-		let res = Self::new(
-			hash_to_curve_g2(b"g0", b"demo"),
-			hash_to_curve_g2(b"g1", b"demo"),
-			hash_to_curve_g2(b"h0", b"demo"),
-			hash_to_curve_g2(b"h1", b"demo"),
-		);
+        let res = Self::new(
+            hash_to_curve_g2(b"g0", b"demo"),
+            hash_to_curve_g2(b"g1", b"demo"),
+            hash_to_curve_g2(b"h0", b"demo"),
+            hash_to_curve_g2(b"h1", b"demo"),
+        );
 
-		return res;
+        return res;
     }
 }

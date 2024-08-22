@@ -35,13 +35,7 @@ impl BBSShowing {
         tmp0.add(&commit);
 
         let abar = tmp0.mul(&r1);
-        return Ok((
-            Self {
-                aprime,
-                abar,
-            },
-            BBSShowingSession { commit, r1 },
-        ));
+        return Ok((Self { aprime, abar }, BBSShowingSession { commit, r1 }));
     }
 
     pub fn verify(&self, pk: &PublicKey) -> Result<(), TokenProofError> {
