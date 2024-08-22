@@ -1,4 +1,4 @@
-use snowbridge_amcl::{bls381::ecp2::ECP2, rand::RAND};
+use snowbridge_amcl::rand::RAND;
 
 use super::{
     keygen::{PublicKey, SigningKey},
@@ -16,7 +16,7 @@ fn test_make_token() {
     let sk = SigningKey::random(&mut rng);
     let pk = PublicKey::from_signing_key(&sk);
 
-    let params = Parameters::debug(&mut rng);
+    let params = Parameters::default();
 
     let t = Token::make(vec![1, 2, 3], &sk, &params, &mut rng);
     let res = t.verify(&pk, &params);
@@ -32,12 +32,11 @@ fn test_showing() {
     let sk = SigningKey::random(&mut rng);
     let pk = PublicKey::from_signing_key(&sk);
 
-    let params = Parameters::debug(&mut rng);
+    let params = Parameters::default();
     let t = Token::make(vec![1, 2, 3], &sk, &params, &mut rng);
 
-    let showing =
-        Showing::show(&t, &ECP2::generator(), 3, &params, &mut rng).expect("showing failed");
+    let showing = Showing::show(&t, b"hello", 3, &params, &mut rng).expect("showing failed");
     showing
-        .verify(3, &ECP2::generator(), &pk, &params)
+        .verify(3, b"hello", &pk, &params)
         .expect("verification failed");
 }

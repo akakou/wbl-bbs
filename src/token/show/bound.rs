@@ -5,7 +5,7 @@ use crate::{
     token::{error::TokenProofError, param::Parameters},
 };
 
-use super::core::{CoreShowingSession, CoreShowing};
+use super::core::{CoreShowing, CoreShowingSession};
 
 pub struct BoundShowing {
     pub bound: crate::bound::proof::Proof,
