@@ -4,10 +4,7 @@ use snowbridge_amcl::{
 };
 
 use super::{
-    keygen::{PublicKey, SigningKey},
-    param::Parameters,
-    show::{BBSShowing, BoundShowing, LinearShowing},
-    token::{self, Token},
+    keygen::{PublicKey, SigningKey}, param::Parameters, show::{bbs::BBSShowing, bound::BoundShowing, linear::LinearShowing}, token::{self, Token}
 };
 
 #[test]

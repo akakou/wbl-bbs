@@ -1,7 +1,5 @@
 use thiserror::Error;
 
-use crate::bound;
-
 #[derive(Debug, Error)]
 pub enum TokenProofError {
     #[error("Commit check failed: {0} != {1}")]
