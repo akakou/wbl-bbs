@@ -1,15 +1,23 @@
-use snowbridge_amcl::{bls381::ecp2::ECP2, rand::RAND};
+use core::CoreShowing;
+
+use snowbridge_amcl::{
+    bls381::ecp2::ECP2,
+    rand::RAND,
+};
+
 
 use super::{error::TokenProofError, keygen::PublicKey, param::Parameters, token::Token};
 
 pub mod bbs;
 pub mod bound;
+pub mod core;
 pub mod linear;
 
 pub struct Showing {
     pub linear: linear::LinearShowing,
     pub bound: bound::BoundShowing,
     pub bbs: bbs::BBSShowing,
+    pub core: CoreShowing,
 }
 
 impl Showing {
@@ -17,23 +25,41 @@ impl Showing {
         linear: linear::LinearShowing,
         bound: bound::BoundShowing,
         bbs: bbs::BBSShowing,
+        core: CoreShowing,
     ) -> Self {
-        Self { linear, bound, bbs }
+        Self {
+            linear,
+            bound,
+            bbs,
+            core,
+        }
     }
 
     pub fn show(
-        t: &Token,
-        origin: &ECP2,
+        token: &Token,
+        origins: &ECP2,
         bit_limit: u8,
         params: &Parameters,
         rng: &mut RAND,
     ) -> Result<Self, TokenProofError> {
-        let (bbs_showing, bbs_secret) = bbs::BBSShowing::show(t, origin, bit_limit, params, rng)?;
-        let bound = bound::BoundShowing::show(&bbs_showing, &bbs_secret, bit_limit, params, rng)?;
-        let linear =
-            linear::LinearShowing::show(&bbs_showing, &bbs_secret, t, origin, params, rng)?;
+        let (core_showing, core_session) =
+            core::CoreShowing::show(token, origins, bit_limit, params, rng)?;
+        let (bbs_showing, bbs_session) = bbs::BBSShowing::show(token, bit_limit, params, rng)?;
 
-        return Ok(Self::new(linear, bound, bbs_showing));
+        let bound =
+            bound::BoundShowing::show(bit_limit, &core_showing, &core_session, params, rng)?;
+        let linear = linear::LinearShowing::show(
+            &token,
+            origins,
+            &core_showing,
+            &core_session,
+            &bbs_showing,
+            &bbs_session,
+            params,
+            rng,
+        )?;
+
+        return Ok(Self::new(linear, bound, bbs_showing, core_showing));
     }
 
     pub fn verify(
@@ -44,9 +70,9 @@ impl Showing {
         params: &Parameters,
     ) -> Result<(), TokenProofError> {
         self.bbs.verify(pk)?;
-        self.bound.verify(&self.bbs, bit_limit, &params)?;
-        self.linear.verify(&self.bbs, &origin, &params)?;
-
+        self.bound.verify(&self.core, bit_limit, &params)?;
+        self.linear
+            .verify(&self.core, &self.bbs, &origin, &params)?;
         Ok(())
     }
 }
