@@ -23,12 +23,6 @@ pub enum TokenProofError {
     #[error("APrime is unity")]
     APrimeIsUnity,
 
-    #[error("failed to verify: {0} != {1} in index {2}")]
-    VerifyFailed(String, String, usize),
-
-    #[error("Proving failed")]
-    ProvingFailed,
-
     #[error("Invalid zero bit limit")]
     InvalidZeroBitLimit,
 }
