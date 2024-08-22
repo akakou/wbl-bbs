@@ -16,7 +16,7 @@ fn test_make_token() {
     let sk = SigningKey::random(&mut rng);
     let pk = PublicKey::from_signing_key(&sk);
 
-    let params = Parameters::debug(&mut rng);
+    let params = Parameters::default();
 
     let t = Token::make(vec![1, 2, 3], &sk, &params, &mut rng);
     let res = t.verify(&pk, &params);
@@ -32,7 +32,7 @@ fn test_showing() {
     let sk = SigningKey::random(&mut rng);
     let pk = PublicKey::from_signing_key(&sk);
 
-    let params = Parameters::debug(&mut rng);
+    let params = Parameters::default();
     let t = Token::make(vec![1, 2, 3], &sk, &params, &mut rng);
 
     let showing =
