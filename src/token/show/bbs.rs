@@ -8,19 +8,7 @@ use crate::token::{error::TokenProofError, keygen::PublicKey, param::Parameters,
 pub struct BBSShowing {
     pub aprime: ECP2,
     pub abar: ECP2,
-    // pub d: ECP2,
-    // pub attributes: Vec<ECP2>,
-    // pub ticket: ECP2,
-    // pub commit: ECP2,
-    // pub k_commit: ECP2,
 }
-
-// pub struct BBSShowingSecret {
-//     pub k_open: Big,
-//     pub k_sc: Big,
-//     pub r1: Big,
-//     pub r2: Big,
-// }
 
 pub struct BBSShowingSession {
     pub commit: ECP2,
@@ -51,11 +39,6 @@ impl BBSShowing {
             Self {
                 aprime,
                 abar,
-                // d,
-                // attributes:
-                // ticket,
-                // k_commit,
-                // commit,
             },
             BBSShowingSession { commit, r1 },
         ));
