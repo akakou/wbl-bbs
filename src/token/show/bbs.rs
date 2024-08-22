@@ -1,7 +1,12 @@
-use snowbridge_amcl::{bls381::{big::Big, ecp::ECP, ecp2::ECP2, pair}, rand::RAND};
+use snowbridge_amcl::{
+    bls381::{big::Big, ecp::ECP, ecp2::ECP2, pair},
+    rand::RAND,
+};
 
-use crate::{linear::utils::order, token::{error::TokenProofError, keygen::PublicKey, param::Parameters, token::Token}};
-
+use crate::{
+    linear::utils::order,
+    token::{error::TokenProofError, keygen::PublicKey, param::Parameters, token::Token},
+};
 
 pub struct BBSShowing {
     pub aprime: ECP2,
@@ -103,4 +108,3 @@ impl BBSShowing {
         }
     }
 }
-

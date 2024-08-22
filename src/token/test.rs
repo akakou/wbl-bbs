@@ -1,10 +1,10 @@
-use snowbridge_amcl::{
-    bls381::ecp2::ECP2,
-    rand::RAND,
-};
+use snowbridge_amcl::{bls381::ecp2::ECP2, rand::RAND};
 
 use super::{
-    keygen::{PublicKey, SigningKey}, param::Parameters, show::{bbs::BBSShowing, bound::BoundShowing, linear::LinearShowing}, token::{self, Token}
+    keygen::{PublicKey, SigningKey},
+    param::Parameters,
+    show::{bbs::BBSShowing, bound::BoundShowing, linear::LinearShowing},
+    token::{self, Token},
 };
 
 #[test]

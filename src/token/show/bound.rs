@@ -1,6 +1,9 @@
 use snowbridge_amcl::rand::RAND;
 
-use crate::{bound, token::{error::TokenProofError, param::Parameters}};
+use crate::{
+    bound,
+    token::{error::TokenProofError, param::Parameters},
+};
 
 use super::bbs::{BBSShowing, BBSShowingSecret};
 

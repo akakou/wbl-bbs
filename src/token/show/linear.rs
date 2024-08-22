@@ -1,9 +1,14 @@
-use snowbridge_amcl::{bls381::{big::Big, ecp2::ECP2}, rand::RAND};
+use snowbridge_amcl::{
+    bls381::{big::Big, ecp2::ECP2},
+    rand::RAND,
+};
 
-use crate::{linear::{self, statement::Statement, utils::order, witeness::Witness}, token::{error::TokenProofError, param::Parameters, token::Token}};
+use crate::{
+    linear::{self, statement::Statement, utils::order, witeness::Witness},
+    token::{error::TokenProofError, param::Parameters, token::Token},
+};
 
 use super::bbs::{BBSShowing, BBSShowingSecret};
-
 
 pub struct LinearShowing {
     pub linear: linear::proof::Proof,
