@@ -1,5 +1,5 @@
 use snowbridge_amcl::{
-    bls381::{big::Big, ecp::ECP, ecp2::ECP2, pair},
+    bls381::ecp2::ECP2,
     rand::RAND,
 };
 
@@ -48,7 +48,6 @@ fn test_bound_showing() {
     rng.seed(10, &seed);
 
     let sk = SigningKey::random(&mut rng);
-    let pk = PublicKey::from_signing_key(&sk);
 
     let params = Parameters::debug(&mut rng);
     let t = Token::make(vec![1, 2, 3], &sk, &params, &mut rng);
@@ -70,7 +69,6 @@ fn test_linear_showing() {
     rng.seed(10, &seed);
 
     let sk = SigningKey::random(&mut rng);
-    let pk = PublicKey::from_signing_key(&sk);
 
     let params = Parameters::debug(&mut rng);
     let t = Token::make(vec![1, 2, 3], &sk, &params, &mut rng);
