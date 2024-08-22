@@ -3,7 +3,7 @@ use snowbridge_amcl::{
     rand::RAND,
 };
 
-use crate::linear::utils::order;
+use crate::utils::order;
 
 use super::{
     error::TokenProofError,

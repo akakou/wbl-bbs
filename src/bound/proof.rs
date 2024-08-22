@@ -5,7 +5,8 @@ use snowbridge_amcl::{
     rand::RAND,
 };
 
-use crate::linear::{self, utils::order};
+use crate::linear;
+use crate::utils::order;
 
 use super::{error::BoundProofError, utils::index_helper, Opening, Parameters, MAX_BIT_LENGTH};
 

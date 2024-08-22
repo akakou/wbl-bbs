@@ -5,7 +5,7 @@ use crate::{
     token::{error::TokenProofError, param::Parameters},
 };
 
-use super::bbs::{BBSShowing, BBSShowingSecret};
+use super::core::{CoreShowingSession, CoreShowing};
 
 pub struct BoundShowing {
     pub bound: crate::bound::proof::Proof,
@@ -17,21 +17,21 @@ impl BoundShowing {
     }
 
     pub fn show(
-        bbs_showing: &BBSShowing,
-        secret: &BBSShowingSecret,
         bit_limit: u8,
+        core_showing: &CoreShowing,
+        core_session: &CoreShowingSession,
         params: &Parameters,
         rng: &mut RAND,
     ) -> Result<Self, TokenProofError> {
         let proof = bound::proof::Proof::prove(
-            &bbs_showing.k_commit,
+            &core_showing.k_commit,
             &bound::Parameters {
                 g: params.h0.clone(),
                 h: params.h1.clone(),
             },
             &bound::Opening {
-                k: secret.k_sc.clone(),
-                r: secret.k_open.clone(),
+                k: core_session.k_sc.clone(),
+                r: core_session.k_open.clone(),
             },
             bit_limit as usize,
             rng,
@@ -45,12 +45,12 @@ impl BoundShowing {
 
     pub fn verify(
         &self,
-        bbs_showing: &BBSShowing,
+        core_showing: &CoreShowing,
         bit_limit: u8,
         params: &Parameters,
     ) -> Result<(), TokenProofError> {
         match self.bound.verify(
-            &bbs_showing.k_commit,
+            &core_showing.k_commit,
             &bound::Parameters {
                 g: params.h0.clone(),
                 h: params.h1.clone(),
