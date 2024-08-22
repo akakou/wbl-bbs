@@ -3,7 +3,7 @@ use snowbridge_amcl::{
     rand::RAND,
 };
 
-use crate::utils::order;
+use crate::{linear::utils::hash, utils::{self, order}};
 
 use super::{
     error::TokenProofError,
@@ -39,7 +39,7 @@ impl Token {
     }
 
     pub fn make(attribute: Vec<u8>, sk: &SigningKey, params: &Parameters, rng: &mut RAND) -> Self {
-        let attr = Big::new();
+        let attr = utils::hash(&attribute);
         let key = Big::random(rng);
 
         let mut u = params.h0.mul(&key);
@@ -70,8 +70,7 @@ impl Token {
 
     pub(crate) fn compute_commit_from_token(&self, params: &Parameters) -> ECP2 {
         let mut commit = params.h0.mul(&self.key);
-
-        let attr = Big::new();
+        let attr = utils::hash(&self.attribute);
 
         let tmp0 = params.h1.mul(&attr);
         commit.add(&tmp0);

@@ -3,7 +3,7 @@ use snowbridge_amcl::{
     rand::RAND,
 };
 
-use crate::utils::order;
+use crate::utils::{self, order};
 
 use crate::{
     linear::{self, statement::Statement, witeness::Witness},
@@ -82,8 +82,8 @@ impl LinearShowing {
         x0.neg();
         x0.add(&bbs_showing.abar);
 
-        let mut x1 = params.g0.clone();
-        x1.add(&ECP2::new());
+        let mut x1 = params.h1.mul(&utils::hash(&core_showing.attribute));
+        x1.add(&params.g0);
 
         let stmt = Statement::new(
             vec![

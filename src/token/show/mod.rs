@@ -44,7 +44,7 @@ impl Showing {
         let origin = hash_to_curve_g2(origin, b"origin generator");
 
         let (core_showing, core_session) =
-            core::CoreShowing::show(token, &origin, bit_limit, params, rng)?;
+            core::CoreShowing::show(token, &origin, bit_limit, &token.attribute, params, rng)?;
         let (bbs_showing, bbs_session) = bbs::BBSShowing::show(token, bit_limit, params, rng)?;
 
         let bound =

@@ -1,4 +1,4 @@
-use snowbridge_amcl::{bls381::ecp2::ECP2, rand::RAND};
+use snowbridge_amcl::rand::RAND;
 
 use super::{
     keygen::{PublicKey, SigningKey},

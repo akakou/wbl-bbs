@@ -11,6 +11,7 @@ use crate::{
 pub struct CoreShowing {
     pub ticket: ECP2,
     pub k_commit: ECP2,
+    pub attribute : Vec<u8>,
 }
 
 pub struct CoreShowingSession {
@@ -23,6 +24,7 @@ impl CoreShowing {
         token: &Token,
         origins: &ECP2,
         bit_limit: u8,
+        attribute: &[u8],
         params: &Parameters,
         rng: &mut RAND,
     ) -> Result<(Self, CoreShowingSession), TokenProofError> {
@@ -40,7 +42,7 @@ impl CoreShowing {
         let ticket = origins.mul(&origin_exp);
 
         return Ok((
-            Self { ticket, k_commit },
+            Self { ticket, k_commit, attribute: attribute.to_vec() },
             CoreShowingSession { k_open, k_sc },
         ));
     }
